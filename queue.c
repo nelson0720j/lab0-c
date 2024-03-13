@@ -261,20 +261,20 @@ int q_ascend(struct list_head *head)
 {
     if (!head || list_empty(head))
         return 0;
-    struct list_head *tmp = head->next;
-    char *curMin = list_entry(tmp, element_t, list)->value;
-    tmp = tmp->next;
-    while (tmp != head) {
-        element_t *entry = list_entry(tmp, element_t, list);
-        if (strcmp(curMin, entry->value) > 0) {
-            struct list_head *del = tmp;
-            tmp = tmp->next;
+    if (list_is_singular(head))
+        return 1;
+    struct list_head *cur = head->prev->prev;
+    while (cur != head) {
+        struct list_head *nex = cur->next;
+        element_t *min_entry = list_entry(cur, element_t, list);
+        element_t *nex_entry = list_entry(nex, element_t, list);
+        if (strcmp(min_entry->value, nex_entry->value) > 0) {
+            struct list_head *del = cur;
             list_del(del);
-            q_release_element(entry);
-        } else {
-            curMin = entry->value;
-            tmp = tmp->next;
-        }
+            cur = cur->prev;
+            q_release_element(list_entry(del, element_t, list));
+        } else
+            cur = cur->prev;
     }
     return q_size(head);
 }
@@ -285,20 +285,20 @@ int q_descend(struct list_head *head)
 {
     if (!head || list_empty(head))
         return 0;
-    struct list_head *tmp = head->next;
-    char *curMax = list_entry(tmp, element_t, list)->value;
-    tmp = tmp->next;
-    while (tmp != head) {
-        element_t *entry = list_entry(tmp, element_t, list);
-        if (strcmp(curMax, entry->value) < 0) {
-            struct list_head *del = tmp;
-            tmp = tmp->next;
+    if (list_is_singular(head))
+        return 1;
+    struct list_head *cur = head->prev->prev;
+    while (cur != head) {
+        struct list_head *nex = cur->next;
+        element_t *max_entry = list_entry(cur, element_t, list);
+        element_t *nex_entry = list_entry(nex, element_t, list);
+        if (strcmp(max_entry->value, nex_entry->value) < 0) {
+            struct list_head *del = cur;
             list_del(del);
-            q_release_element(entry);
-        } else {
-            curMax = entry->value;
-            tmp = tmp->next;
-        }
+            cur = cur->prev;
+            q_release_element(list_entry(del, element_t, list));
+        } else
+            cur = cur->prev;
     }
     return q_size(head);
 }
