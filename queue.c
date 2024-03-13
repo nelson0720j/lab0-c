@@ -266,7 +266,7 @@ int q_ascend(struct list_head *head)
     tmp = tmp->next;
     while (tmp != head) {
         element_t *entry = list_entry(tmp, element_t, list);
-        if (strcmp(curMin, entry->value) <= 0) {
+        if (strcmp(curMin, entry->value) > 0) {
             struct list_head *del = tmp;
             tmp = tmp->next;
             list_del(del);
@@ -290,7 +290,7 @@ int q_descend(struct list_head *head)
     tmp = tmp->next;
     while (tmp != head) {
         element_t *entry = list_entry(tmp, element_t, list);
-        if (strcmp(curMax, entry->value) >= 0) {
+        if (strcmp(curMax, entry->value) < 0) {
             struct list_head *del = tmp;
             tmp = tmp->next;
             list_del(del);
