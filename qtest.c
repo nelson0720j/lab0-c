@@ -22,6 +22,7 @@
 #include "dudect/fixture.h"
 #include "list.h"
 #include "random.h"
+#include "shuffle.h"
 
 /* Shannon entropy */
 extern double shannon_entropy(const uint8_t *input_data);
@@ -284,6 +285,30 @@ static bool do_ih(int argc, char *argv[])
 static bool do_it(int argc, char *argv[])
 {
     return queue_insert(POS_TAIL, argc, argv);
+}
+
+static bool do_shuffle(int argc, char *argv[])
+{
+    if (argc != 1) {
+        report(1, "%s takes no arguments", argv[0]);
+        return error_check();
+    }
+
+    if (!current || !current->q) {
+        report(3, "Warning: Calling shuffle on null queue");
+        return error_check();
+    }
+
+    if (current->size < 2) {
+        report(3, "Warning: Calling shuffle on single node of queue");
+        return error_check();
+    }
+
+    if (exception_setup(true))
+        q_shuffle(current->q);
+
+    q_show(3);
+    return !error_check();
 }
 
 static bool queue_remove(position_t pos, int argc, char *argv[])
@@ -1042,6 +1067,7 @@ static void console_init()
     ADD_COMMAND(dedup, "Delete all nodes that have duplicate string", "");
     ADD_COMMAND(merge, "Merge all the queues into one sorted queue", "");
     ADD_COMMAND(swap, "Swap every two adjacent nodes in queue", "");
+    ADD_COMMAND(shuffle, "Shuffle the queue", "");
     ADD_COMMAND(ascend,
                 "Remove every node which has a node with a strictly less "
                 "value anywhere to the right side of it",
